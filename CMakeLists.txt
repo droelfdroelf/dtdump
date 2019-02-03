@@ -1,0 +1,25 @@
+cmake_minimum_required (VERSION 2.6)
+project (usbt)
+SET(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${PROJECT_SOURCE_DIR}/cmake/")
+
+find_package(LibSndFile REQUIRED)
+find_package(LibUSB REQUIRED)
+
+if(LIBSNDFILE_FOUND)
+    message(STATUS "LIBSNDFILE_INCLUDE_DIR='${LIBSNDFILE_INCLUDE_DIR}'")
+    message(STATUS "LIBSNDFILE_LIBRARY=${LIBSNDFILE_LIBRARY}")
+    include_directories(${LIBSNDFILE_INCLUDE_DIR})
+else()
+	message(STATUS "LIBSNDFILE not found!")
+endif(LIBSNDFILE_FOUND)
+
+if(LibUSB_FOUND)
+	message(STATUS "LibUSB_INCLUDE_DIRS='${LibUSB_INCLUDE_DIRS}'")
+    message(STATUS "LibUSB_LIBRARIES=${LibUSB_LIBRARIES}")
+    include_directories(${LibUSB_INCLUDE_DIRS})
+else()
+	message(STATUS "LibUSB not found!")
+endif(LibUSB_FOUND)
+
+add_executable(dtdump dtdump.c)  
+target_link_libraries(dtdump ${LibUSB_LIBRARIES} ${LIBSNDFILE_LIBRARY})
