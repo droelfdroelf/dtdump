@@ -298,7 +298,7 @@ static int prepare_cycle(){
 }
 
 static void sighandler(int s){
-	printf("Shutting down ...\n",s);
+	printf("Shutting down ...\n");
 	shtdwn = 1;
 }
 
