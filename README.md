@@ -18,6 +18,9 @@ make
 ```
 # Usage
 
+**Note** You have to configure the routing accordingly as in the picture below. **This is not the default setting**! It is likely that the data format, number of channels etc. differ without changing this, and dtdump will fail (since everything is hard coded so far).
+![OB rounting](pics/obroute.jpg?raw=true "Routing setup")
+
 Just run ```./dtdump```. It will dump the stream to ```dtdump-<time stamp>.wav```
 (12 channels, 32 Bit integer, 48kHz srate) until you press Ctrl-C.
 
