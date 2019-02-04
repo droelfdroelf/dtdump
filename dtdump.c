@@ -28,29 +28,29 @@
 
  0                   1                   2                   3
  0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1
-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-| fixed header: 0x07FF          | sample counter (uint16_t)     |
-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-|                                                               |
-+                            unknown                            +
-                               ...
-+                           (28 Bytes)                          +
-|                                                               |
-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-| sample  1, Master Out 1, int32_t                              |
-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-| sample  1, Master Out 2, int32_t                              |
-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-| sample  2, Master Out 1, int32_t                              |
-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-| sample  2, Master Out 2, int32_t                              |
-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-|                                                               |
-+                        samples 3 .. 7                         +
-                               ...
-+                     (5*8 Bytes = 40 Bytes)                    +
-|                                                               |
-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+ +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+ | fixed header: 0x07FF          | sample counter (uint16_t)     |
+ +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+ |                                                               |
+ +                            unknown                            +
+ ...
+ +                           (28 Bytes)                          +
+ |                                                               |
+ +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+ | sample  1, Master Out 1, int32_t                              |
+ +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+ | sample  1, Master Out 2, int32_t                              |
+ +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+ | sample  2, Master Out 1, int32_t                              |
+ +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+ | sample  2, Master Out 2, int32_t                              |
+ +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+ |                                                               |
+ +                        samples 3 .. 7                         +
+ ...
+ +                     (5*8 Bytes = 40 Bytes)                    +
+ |                                                               |
+ +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
 
 
 
@@ -62,69 +62,69 @@
 
  0                   1                   2                   3
  0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1
-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-| fixed header: 0x0700          | sample counter (uint16_t)     |
-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-|                                                               |
-+                            unknown                            +
-                               ...
-+                           (28 Bytes)                          +
-|                                                               |
-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-| sample  1, Master 1/FX1, int32_t                              |
-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-| sample  1, Master 2/FX2, int32_t                              |
-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-| sample  1, CH1, int32_t                                       |
-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-| sample  1, CH2, int32_t                                       |
-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-| sample  1, CH3, int32_t                                       |
-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-| sample  1, CH4, int32_t                                       |
-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-| sample  1, CH5, int32_t                                       |
-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-| sample  1, CH6, int32_t                                       |
-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-| sample  1, CH7, int32_t                                       |
-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-| sample  1, CH8, int32_t                                       |
-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-| sample  1, EXT IN 1, int32_t                                  |
-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-| sample  1, EXT IN 2, int32_t                                  |
-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-| sample  2, Master 1/FX1, int32_t                              |
-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-| sample  2, Master 2/FX2, int32_t                              |
-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-| sample  2, CH1, int32_t                                       |
-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-| sample  2, CH2, int32_t                                       |
-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-| sample  2, CH3, int32_t                                       |
-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-| sample  2, CH4, int32_t                                       |
-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-| sample  2, CH5, int32_t                                       |
-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-| sample  2, CH6, int32_t                                       |
-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-| sample  2, CH7, int32_t                                       |
-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-| sample  2, CH8, int32_t                                       |
-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-| sample  2, EXT IN 1, int32_t                                  |
-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-| sample  2, EXT IN 2, int32_t                                  |
-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-|                                                               |
-+                        samples 3 .. 7                         +
-                               ...
-+                     (5*48 Bytes = 240 Bytes)                  +
-|                                                               |
-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+ +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+ | fixed header: 0x0700          | sample counter (uint16_t)     |
+ +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+ |                                                               |
+ +                            unknown                            +
+ ...
+ +                           (28 Bytes)                          +
+ |                                                               |
+ +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+ | sample  1, Master 1/FX1, int32_t                              |
+ +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+ | sample  1, Master 2/FX2, int32_t                              |
+ +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+ | sample  1, CH1, int32_t                                       |
+ +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+ | sample  1, CH2, int32_t                                       |
+ +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+ | sample  1, CH3, int32_t                                       |
+ +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+ | sample  1, CH4, int32_t                                       |
+ +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+ | sample  1, CH5, int32_t                                       |
+ +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+ | sample  1, CH6, int32_t                                       |
+ +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+ | sample  1, CH7, int32_t                                       |
+ +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+ | sample  1, CH8, int32_t                                       |
+ +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+ | sample  1, EXT IN 1, int32_t                                  |
+ +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+ | sample  1, EXT IN 2, int32_t                                  |
+ +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+ | sample  2, Master 1/FX1, int32_t                              |
+ +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+ | sample  2, Master 2/FX2, int32_t                              |
+ +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+ | sample  2, CH1, int32_t                                       |
+ +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+ | sample  2, CH2, int32_t                                       |
+ +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+ | sample  2, CH3, int32_t                                       |
+ +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+ | sample  2, CH4, int32_t                                       |
+ +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+ | sample  2, CH5, int32_t                                       |
+ +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+ | sample  2, CH6, int32_t                                       |
+ +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+ | sample  2, CH7, int32_t                                       |
+ +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+ | sample  2, CH8, int32_t                                       |
+ +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+ | sample  2, EXT IN 1, int32_t                                  |
+ +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+ | sample  2, EXT IN 2, int32_t                                  |
+ +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+ |                                                               |
+ +                        samples 3 .. 7                         +
+ ...
+ +                     (5*48 Bytes = 240 Bytes)                  +
+ |                                                               |
+ +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
 
  */
 
@@ -143,43 +143,43 @@ int shtdwn = 0;
 
 static libusb_device_handle* digitakt;
 
-static uint8_t dummy_out_data [2112] = { 0 };
-static uint8_t in_data [8832] = { 0 };
-static int32_t wav_data [2016] = { 0 };
+static uint8_t dummy_out_data[2112] = { 0 };
+static uint8_t in_data[8832] = { 0 };
+static int32_t wav_data[2016] = { 0 };
 
 static uint16_t dummy_timestamp = 0;
 
 static struct libusb_transfer *xfr_in;
 static struct libusb_transfer *xfr_out;
 
-SNDFILE	*wavfile;
+SNDFILE *wavfile;
 
 static int prepare_cycle();	// forward declaration
 
-static int prepare_transfers(){
+static int prepare_transfers() {
 	xfr_in = libusb_alloc_transfer(0);
-	if(!xfr_in){
+	if (!xfr_in) {
 		return -ENOMEM;
 	}
 	xfr_out = libusb_alloc_transfer(0);
-	if(!xfr_out){
+	if (!xfr_out) {
 		return -ENOMEM;
 	}
 	return LIBUSB_SUCCESS;
 }
 
-static void free_transfers(){
+static void free_transfers() {
 	libusb_free_transfer(xfr_in);
 	libusb_free_transfer(xfr_out);
 }
 
-static void fill_dummy_data(){
+static void fill_dummy_data() {
 	int offs = 0;
 	while (offs < sizeof(dummy_out_data)) {
 		dummy_out_data[offs] = 0x07;
-		dummy_out_data[offs+1] = 0xFF;
-		dummy_out_data[offs+2] = (dummy_timestamp >> 8) & 0xFF;
-		dummy_out_data[offs+3] = (dummy_timestamp) & 0xFF;
+		dummy_out_data[offs + 1] = 0xFF;
+		dummy_out_data[offs + 2] = (dummy_timestamp >> 8) & 0xFF;
+		dummy_out_data[offs + 3] = (dummy_timestamp) & 0xFF;
 		offs += 88;	// block length
 		dummy_timestamp += 7;
 	}
@@ -253,25 +253,25 @@ static void usb_shutdown() {
 	libusb_exit(NULL);
 }
 
-static void save_data(){
+static void save_data() {
 	// store sample data in tmp buf
-	uint32_t len = sizeof(in_data)/4;
+	uint32_t len = sizeof(in_data) / 4;
 	uint32_t pos = 0;
 	uint32_t wav_pos = 0;
 	while (pos < len) {
-		pos+= 0x08;	// skip header (8 * uint32_t)
+		pos += 0x08;	// skip header (8 * uint32_t)
 		// wav is LE
-		for (int i = 0; i < (12 * 7); i++){
-			wav_data[wav_pos++] = ntohl(((uint32_t*)in_data)[i + pos]);
+		for (int i = 0; i < (12 * 7); i++) {
+			wav_data[wav_pos++] = ntohl(((uint32_t*) in_data)[i + pos]);
 		}
-		pos+=(12 * 7);
+		pos += (12 * 7);
 	}
 }
 
 static int receive_done = 0;
 
-static void LIBUSB_CALL cb_xfr_in(struct libusb_transfer *xfr){
-	if(xfr->status == LIBUSB_TRANSFER_COMPLETED ){
+static void LIBUSB_CALL cb_xfr_in(struct libusb_transfer *xfr) {
+	if (xfr->status == LIBUSB_TRANSFER_COMPLETED) {
 		save_data();
 		receive_done = 1; // mark receive done
 	}
@@ -279,25 +279,26 @@ static void LIBUSB_CALL cb_xfr_in(struct libusb_transfer *xfr){
 	prepare_cycle();
 }
 
-static void LIBUSB_CALL cb_xfr_out(struct libusb_transfer *xfr){
+static void LIBUSB_CALL cb_xfr_out(struct libusb_transfer *xfr) {
 	// dummy call back for now, we don't care about the dummy data
 }
 
-
 // sends  (dummy) data to the dt and receives
-static int prepare_cycle(){
+static int prepare_cycle() {
 	fill_dummy_data();
-	libusb_fill_interrupt_transfer(xfr_out, digitakt, 0x03, dummy_out_data, sizeof(dummy_out_data), cb_xfr_out, NULL, 100);
-	libusb_fill_interrupt_transfer(xfr_in, digitakt, 0x83, in_data, sizeof(in_data), cb_xfr_in, NULL, 100);
+	libusb_fill_interrupt_transfer(xfr_out, digitakt, 0x03, dummy_out_data,
+			sizeof(dummy_out_data), cb_xfr_out, NULL, 100);
+	libusb_fill_interrupt_transfer(xfr_in, digitakt, 0x83, in_data,
+			sizeof(in_data), cb_xfr_in, NULL, 100);
 	int r = libusb_submit_transfer(xfr_out);
-	if (r!=0){
+	if (r != 0) {
 		return r;
 	}
 	r = libusb_submit_transfer(xfr_in);
 	return r;
 }
 
-static void sighandler(int s){
+static void sighandler(int s) {
 	printf("Shutting down ...\n");
 	shtdwn = 1;
 }
@@ -314,37 +315,37 @@ int main(int argc, char *argv[]) {
 	// libusb setup
 	int r;
 	r = libusb_init(NULL);
-	if (r != LIBUSB_SUCCESS){
+	if (r != LIBUSB_SUCCESS) {
 		printf("Could not init libusb!\n");
 		goto doexit;
 	}
 
 	// wav file setup
-	SF_INFO	sfinfo;
-	memset (&sfinfo, 0, sizeof (sfinfo)) ;
+	SF_INFO sfinfo;
+	memset(&sfinfo, 0, sizeof(sfinfo));
 	sfinfo.channels = 12;
 	sfinfo.format = SF_FORMAT_WAV | SF_FORMAT_PCM_32;
 	sfinfo.samplerate = 48000;
-	if(!sf_format_check (&sfinfo)){
+	if (!sf_format_check(&sfinfo)) {
 		printf("format check failed\n");
 		goto doexit;
-	} ;
+	};
 	char wavfilename[200];
 	time_t now = time(NULL);
 	struct tm *t = localtime(&now);
-	strftime(wavfilename, sizeof(wavfilename)-1, "obdump_%Y%m%d-%H%M%S.wav", t);
-	wavfile = sf_open (wavfilename, SFM_WRITE, &sfinfo);
+	strftime(wavfilename, sizeof(wavfilename) - 1, "obdump_%Y%m%d-%H%M%S.wav",
+			t);
+	wavfile = sf_open(wavfilename, SFM_WRITE, &sfinfo);
 
 	// digitakt/ob setup
 	digitakt = libusb_open_device_with_vid_pid(NULL, DT_VID, DT_PID);
-	if (digitakt){
+	if (digitakt) {
 		r = digitakt_init(digitakt);
-		if (r!=LIBUSB_SUCCESS){
+		if (r != LIBUSB_SUCCESS) {
 			printf("Could not init Digitakt!\n");
 			goto doexit;
 		}
-	}
-	else {
+	} else {
 		printf("No Digitakt found!\n");
 		goto doexit;
 	}
@@ -354,18 +355,17 @@ int main(int argc, char *argv[]) {
 	printf("Recording to %s, Ctrl-C to stop.\n", wavfilename);
 
 	// main loop
-	while (!shtdwn){
+	while (!shtdwn) {
 		libusb_handle_events(NULL);
-		if(receive_done){
-			int count = sf_write_int(wavfile, wav_data, sizeof(wav_data)/4);
+		if (receive_done) {
+			int count = sf_write_int(wavfile, wav_data, sizeof(wav_data) / 4);
 			receive_done = 0;
 			// printf("# %i\n", count);
 		}
 	}
 
 	// gracefully shut down everything
-doexit:
-	sf_write_sync(wavfile);
+	doexit: sf_write_sync(wavfile);
 	sf_close(wavfile);
 	usb_shutdown();
 	return 0;
