@@ -154,7 +154,8 @@ static struct libusb_transfer *xfr_out;
 
 SNDFILE *wavfile;
 
-static int prepare_cycle();	// forward declaration
+static int prepare_cycle_in();	// forward declaration
+static int prepare_cycle_out();	// forward declaration
 
 static int prepare_transfers() {
 	xfr_in = libusb_alloc_transfer(0);
@@ -275,26 +276,33 @@ static void LIBUSB_CALL cb_xfr_in(struct libusb_transfer *xfr) {
 	if (xfr->status == LIBUSB_TRANSFER_COMPLETED) {
 		save_data();
 		receive_done = 1; // mark receive done
+	} else {
+		printf("x");
 	}
 	// start new cycle even if this one did not succeed
-	prepare_cycle();
+	prepare_cycle_in();
 }
 
 static void LIBUSB_CALL cb_xfr_out(struct libusb_transfer *xfr) {
-	// dummy call back for now, we don't care about the dummy data
+	// We have to make sure that the out cycle is always started after its callback
+	// Race condition on slower systems!
+	prepare_cycle_out();
 }
 
-// sends  (dummy) data to the dt and receives
-static int prepare_cycle() {
+static int prepare_cycle_out() {
 	fill_dummy_data();
 	libusb_fill_interrupt_transfer(xfr_out, digitakt, 0x03, dummy_out_data,
 			sizeof(dummy_out_data), cb_xfr_out, NULL, 100);
+	int r;
+	r = libusb_submit_transfer(xfr_out);
+	return r;
+}
+
+// sends  (dummy) data to the dt and receives
+static int prepare_cycle_in() {
 	libusb_fill_interrupt_transfer(xfr_in, digitakt, 0x83, in_data,
 			sizeof(in_data), cb_xfr_in, NULL, 100);
-	int r = libusb_submit_transfer(xfr_out);
-	if (r != 0) {
-		return r;
-	}
+	int r;
 	r = libusb_submit_transfer(xfr_in);
 	return r;
 }
@@ -352,15 +360,19 @@ int main(int argc, char *argv[]) {
 	}
 
 	// prepare transfers
-	prepare_cycle();
+	prepare_cycle_out();
+	prepare_cycle_in();
 	printf("Recording to %s, Ctrl-C to stop.\n", wavfilename);
 
 	// main loop
+	unsigned long written_bytes = 0;
 	while (!shtdwn) {
 		libusb_handle_events(NULL);
 		if (receive_done) {
-			int count = sf_write_int(wavfile, wav_data, sizeof(wav_data) / 4);
+			written_bytes += sf_write_int(wavfile, wav_data,
+					sizeof(wav_data) / 4) * 4;
 			receive_done = 0;
+			printf("\r%i kB", written_bytes / 1024);
 			// printf("# %i\n", count);
 		}
 	}
