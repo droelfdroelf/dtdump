@@ -24,6 +24,16 @@ make
 Just run ```./dtdump```. It will dump the stream to ```dtdump-<time stamp>.wav```
 (12 channels, 32 Bit integer, 48kHz srate) until you press Ctrl-C.
 
+# Building/running on Raspbian
+install deps: ```sudo apt install libsndfile1-dev libusb-1.0-0-dev cmake 
+build-essential git```
+Has to be run as root in default Raspbian (lite) installation.
+
+![Raspberry recording](pics/rpi.png?raw=true "Raspberry recording")
+
+# Storage requirements
+About 2.3MB/s, seems to be no problem with a class 10 SD card on a Rpi3.
+
 LICENSE: MIT
 
 Stefan Rehm, 2019
