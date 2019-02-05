@@ -258,10 +258,11 @@ static void save_data() {
 	uint32_t len = sizeof(in_data) / 4;
 	uint32_t pos = 0;
 	uint32_t wav_pos = 0;
+	int i;
 	while (pos < len) {
 		pos += 0x08;	// skip header (8 * uint32_t)
 		// wav is LE
-		for (int i = 0; i < (12 * 7); i++) {
+		for (i = 0; i < (12 * 7); i++) {
 			wav_data[wav_pos++] = ntohl(((uint32_t*) in_data)[i + pos]);
 		}
 		pos += (12 * 7);
