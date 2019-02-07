@@ -149,6 +149,8 @@ static int32_t wav_data[2016] = { 0 };
 
 static uint16_t dummy_timestamp = 0;
 
+static uint32_t xruns = 0;
+
 static struct libusb_transfer *xfr_in;
 static struct libusb_transfer *xfr_out;
 
@@ -260,6 +262,21 @@ static void save_data() {
 	uint32_t pos = 0;
 	uint32_t wav_pos = 0;
 	int i;
+	static int first = 1;
+	static uint16_t lastts;
+	uint16_t ts;
+	ts = ntohs(((uint16_t*)in_data)[1]);
+	if(first)
+	{
+		first = 0;
+	}
+	else {
+		if (((uint16_t)(ts-lastts)) > 168){
+			xruns ++;
+		}
+	}
+	lastts = ts;
+
 	while (pos < len) {
 		pos += 0x08;	// skip header (8 * uint32_t)
 		// wav is LE
@@ -372,11 +389,11 @@ int main(int argc, char *argv[]) {
 			written_bytes += sf_write_int(wavfile, wav_data,
 					sizeof(wav_data) / 4) * 4;
 			receive_done = 0;
-			printf("\r%i kB", written_bytes / 1024);
+			printf("\r%i kB - xrun: %i", written_bytes / 1024, xruns);
 			// printf("# %i\n", count);
 		}
 	}
-
+	printf("\r\n\n");
 	// gracefully shut down everything
 	doexit: sf_write_sync(wavfile);
 	sf_close(wavfile);
