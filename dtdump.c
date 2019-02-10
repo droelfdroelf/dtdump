@@ -128,6 +128,8 @@
 
  */
 
+// for O_DIRECT
+#define _GNU_SOURCE
 #include <stdio.h>
 #include <string.h>
 #include <errno.h>
@@ -138,6 +140,7 @@
 #include <arpa/inet.h>
 #include <sndfile.h>
 #include <time.h>
+#include <fcntl.h>
 
 int shtdwn = 0;
 
@@ -155,6 +158,7 @@ static struct libusb_transfer *xfr_in;
 static struct libusb_transfer *xfr_out;
 
 SNDFILE *wavfile;
+int wfd;
 
 static int prepare_cycle_in();	// forward declaration
 static int prepare_cycle_out();	// forward declaration
@@ -361,7 +365,23 @@ int main(int argc, char *argv[]) {
 	struct tm *t = localtime(&now);
 	strftime(wavfilename, sizeof(wavfilename) - 1, "obdump_%Y%m%d-%H%M%S.wav",
 			t);
-	wavfile = sf_open(wavfilename, SFM_WRITE, &sfinfo);
+
+	wfd = open(wavfilename, O_WRONLY);
+	wavfile = sf_open_fd(wfd, SFM_WRITE, &sfinfo, 1);
+	fcntl(wfd, F_SETFL, O_DIRECT);
+
+	int pid = fork();
+	if (pid < 0) {
+		printf("fork failed\n");
+		goto doexit;
+	} else {
+		if (pid == 0) {
+			// child
+		} else {
+			// parent
+		}
+	}
+
 
 	// digitakt/ob setup
 	digitakt = libusb_open_device_with_vid_pid(NULL, DT_VID, DT_PID);
@@ -375,6 +395,8 @@ int main(int argc, char *argv[]) {
 		printf("No Digitakt found!\n");
 		goto doexit;
 	}
+
+
 
 	// prepare transfers
 	prepare_cycle_out();
