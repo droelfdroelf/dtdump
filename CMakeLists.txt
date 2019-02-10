@@ -21,5 +21,7 @@ else()
 	message(STATUS "LibUSB not found!")
 endif(LibUSB_FOUND)
 
-add_executable(dtdump dtdump.c)  
+include_directories(header)
+file(GLOB SOURCES "src/*.c")
+add_executable(dtdump ${SOURCES})  
 target_link_libraries(dtdump ${LibUSB_LIBRARIES} ${LIBSNDFILE_LIBRARY})
