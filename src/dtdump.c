@@ -16,8 +16,6 @@
 
  */
 
-// for O_DIRECT
-#define _GNU_SOURCE
 #include <stdio.h>
 #include <string.h>
 #include <errno.h>
@@ -75,24 +73,22 @@ int main(int argc, char *argv[]) {
 	strftime(wavfilename, sizeof(wavfilename) - 1, "obdump_%Y%m%d-%H%M%S.wav",
 			t);
 
-	//wfd = open(wavfilename, O_WRONLY);
 	wavfile = sf_open(wavfilename, SFM_WRITE, &sfinfo);
-	//wavfile = sf_open_fd(wfd, SFM_WRITE, &sfinfo, 1);
-	// fcntl(wfd, F_SETFL, O_DIRECT);
+
+
 	printf("Recording to %s, Ctrl-C to stop.\n", wavfilename);
 
 	overbridge_start_streaming();
 
 	// main loop
 	unsigned long written_bytes = 0;
+	int32_t wavd[TRANSFER_WAV_DATA_SIZE];
 	while (!shtdwn) {
-		overbridge_do_work();
-		if (overbridge_is_data_available()) {
-			written_bytes += sf_write_int(wavfile, get_overbridge_wav_data(),
-					get_overbridge_wav_data_size() / 4) * 4;
+		get_overbridge_wav_data(wavd);
+		written_bytes += (sf_write_int(wavfile, wavd, TRANSFER_WAV_DATA_SIZE))
+				* 4;
 			printf("\r%i kB - xrun: %i", written_bytes / 1024,
 				overbridge_get_xrun());
-		}
 	};
 
 	printf("\r\n\n");

@@ -7,7 +7,6 @@
 
 #include "overbridge.h"
 
-#define _GNU_SOURCE
 #include <stdio.h>
 #include <string.h>
 #include <errno.h>
@@ -15,7 +14,9 @@
 #include <stdint.h>
 #include <stdlib.h>
 #include <arpa/inet.h>
-#include <fcntl.h>
+#include "message_queue.h"
+
+#define OB_QUEUESIZE	1024
 
 // we support only the Digitakt for now ...
 #define DT_VID 0x1935
@@ -24,13 +25,16 @@
 #define TRANSFER_OUT_DATA_SIZE 2112
 #define TRANSFER_IN_DATA_SIZE 8832
 
+
 static libusb_device_handle* digitakt;
 static uint8_t dummy_out_data[TRANSFER_OUT_DATA_SIZE] = { 0 };
 static uint8_t in_data[TRANSFER_IN_DATA_SIZE] = { 0 };
-int32_t overbridge_wav_data[2016];
+int32_t overbridge_wav_data[TRANSFER_WAV_DATA_SIZE];
+
+struct message_queue queue;
 
 static uint16_t dummy_timestamp = 0;
-static uint32_t xruns = 0;
+static volatile uint32_t xruns = 0;
 
 static struct libusb_transfer *xfr_in;
 static struct libusb_transfer *xfr_out;
@@ -72,6 +76,7 @@ static void save_data() {
 	uint32_t len = sizeof(in_data) / 4;
 	uint32_t pos = 0;
 	uint32_t wav_pos = 0;
+	int32_t* qdata;
 	int i;
 	static int first = 1;
 	static uint16_t lastts;
@@ -85,15 +90,17 @@ static void save_data() {
 		}
 	}
 	lastts = ts;
-
+	qdata = message_queue_message_alloc(&queue);
+	if (qdata) {
 	while (pos < len) {
-		pos += 0x08;	// skip header (8 * uint32_t)
-		// wav is LE
-		for (i = 0; i < (12 * 7); i++) {
-			overbridge_wav_data[wav_pos++] = ntohl(
-					((uint32_t*) in_data)[i + pos]);
+			pos += 0x08;	// skip header (8 * uint32_t)
+			// wav is LE
+			for (i = 0; i < (12 * 7); i++) {
+				qdata[wav_pos++] = ntohl(((uint32_t*) in_data)[i + pos]);
+			}
+			pos += (12 * 7);
 		}
-		pos += (12 * 7);
+		message_queue_write(&queue, qdata);
 	}
 }
 
@@ -102,7 +109,7 @@ static int receive_done = 0;
 static void LIBUSB_CALL cb_xfr_in(struct libusb_transfer *xfr) {
 	if (xfr->status == LIBUSB_TRANSFER_COMPLETED) {
 		save_data();
-		receive_done = 1; // mark receive done
+		// receive_done = 1; // mark receive done
 	} else {
 		//	printf("x");
 	}
@@ -183,6 +190,10 @@ static int overbridge_init_priv() {
 	if (LIBUSB_SUCCESS != ret) {
 		return OVERBRIDGE_CANT_PREPARE_TRANSFER;
 	}
+	if (message_queue_init(&queue, sizeof(overbridge_wav_data), OB_QUEUESIZE)
+			!= 0) {
+		return OVERBRIDGE_CANT_SETUP_QUEUE;
+	}
 	return OVERBRIDGE_OK;
 }
 
@@ -222,26 +233,22 @@ void overbridge_start_streaming() {
 void overbridge_do_work() {
 	libusb_handle_events(NULL);
 }
-bool overbridge_is_data_available() {
-	if (receive_done) {
-		receive_done = false;
-		return true;
-	} else
-		return false;
-}
-
 
 uint32_t overbridge_get_xrun() {
 	return xruns;
 }
 void overbridge_shutdown() {
+	message_queue_destroy(&queue);
 	usb_shutdown();
 }
 
-int32_t* get_overbridge_wav_data() {
-	return overbridge_wav_data;
+void get_overbridge_wav_data(int32_t* data) {
+	int32_t* qp;
+	qp = message_queue_read(&queue);
+	memcpy((void*) data, (void*) qp, TRANSFER_WAV_DATA_SIZE * 4);
+	message_queue_message_free(&queue, qp);
 }
 
-uint32_t get_overbridge_wav_data_size() {
-	return sizeof(overbridge_wav_data);
+uint32_t get_overbridge_qlen() {
+	return queue.queue.entries;
 }

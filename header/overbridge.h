@@ -131,6 +131,8 @@
 #include "stdbool.h"
 #include "stdint.h"
 
+#define TRANSFER_WAV_DATA_SIZE 2016
+
 typedef enum {
 	OVERBRIDGE_OK = 0,
 	OVERBRIDGE_LIBUSB_INIT_FAILED,
@@ -139,17 +141,17 @@ typedef enum {
 	OVERBRIDGE_CANT_CLAIM_IF,
 	OVERBRIDGE_CANT_SET_ALT_SETTING,
 	OVERBRIDGE_CANT_CLEAR_EP,
-	OVERBRIDGE_CANT_PREPARE_TRANSFER
+	OVERBRIDGE_CANT_PREPARE_TRANSFER,
+	OVERBRIDGE_CANT_SETUP_QUEUE
 } overbridge_err_t;
 
 
-int32_t* get_overbridge_wav_data();
-uint32_t get_overbridge_wav_data_size();
+void get_overbridge_wav_data(int32_t* data);
+uint32_t get_overbridge_qlen();
 const char* overbrigde_get_err_str(overbridge_err_t errcode);
 overbridge_err_t overbridge_init();
 void overbridge_start_streaming();
 void overbridge_do_work();
-bool overbridge_is_data_available();
 uint32_t overbridge_get_xrun();
 void overbridge_shutdown();
 
