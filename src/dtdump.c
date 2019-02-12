@@ -82,13 +82,21 @@ int main(int argc, char *argv[]) {
 
 	// main loop
 	unsigned long written_bytes = 0;
+	clock_t oldclk = 0;
+	clock_t newclk = 0;
 	int32_t wavd[TRANSFER_WAV_DATA_SIZE];
 	while (!shtdwn) {
 		get_overbridge_wav_data(wavd);
+
 		written_bytes += (sf_write_int(wavfile, wavd, TRANSFER_WAV_DATA_SIZE))
 				* 4;
-			printf("\r%i kB - xrun: %i", written_bytes / 1024,
-				overbridge_get_xrun());
+		newclk = clock();
+		if ((newclk - oldclk) > 250) {	// print every 250ms
+			printf("%i kB - buff: %i - xrun: %i\n", written_bytes / 1024,
+					overbridge_get_qlen(),
+					overbridge_get_xrun());
+			oldclk = newclk;
+		}
 	};
 
 	printf("\r\n\n");

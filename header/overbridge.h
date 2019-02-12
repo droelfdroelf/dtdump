@@ -147,12 +147,10 @@ typedef enum {
 
 
 void get_overbridge_wav_data(int32_t* data);
-uint32_t get_overbridge_qlen();
+uint32_t overbridge_get_qlen();
 const char* overbrigde_get_err_str(overbridge_err_t errcode);
 overbridge_err_t overbridge_init();
 void overbridge_start_streaming();
-void overbridge_do_work();
 uint32_t overbridge_get_xrun();
 void overbridge_shutdown();
-
 #endif /* OVERBRIDGE_H_ */

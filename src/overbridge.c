@@ -14,6 +14,7 @@
 #include <stdint.h>
 #include <stdlib.h>
 #include <arpa/inet.h>
+#include <pthread.h>
 #include "message_queue.h"
 
 #define OB_QUEUESIZE	1024
@@ -38,6 +39,9 @@ static volatile uint32_t xruns = 0;
 
 static struct libusb_transfer *xfr_in;
 static struct libusb_transfer *xfr_out;
+
+static pthread_t transfer_thread;
+static int running = 1;
 
 static int prepare_cycle_in();	// forward declaration
 static int prepare_cycle_out();	// forward declaration
@@ -205,6 +209,14 @@ static void usb_shutdown() {
 	libusb_exit(NULL);
 }
 
+static void* worker(void *ptr) {
+	prepare_cycle_out();
+	prepare_cycle_in();
+	while (running) {
+		libusb_handle_events(NULL);
+	}
+}
+
 static const char* ob_err_strgs[] = { "ok", "libusb init failed",
 		"no matching usb device found", "can't set usb config",
 		"can't claim usb interface", "can't set usb alt setting",
@@ -226,18 +238,15 @@ overbridge_err_t overbridge_init() {
 }
 
 void overbridge_start_streaming() {
-	prepare_cycle_out();
-	prepare_cycle_in();
-}
-
-void overbridge_do_work() {
-	libusb_handle_events(NULL);
+	pthread_create(&transfer_thread, NULL, worker, NULL);
 }
 
 uint32_t overbridge_get_xrun() {
 	return xruns;
 }
 void overbridge_shutdown() {
+	running = 0;
+	pthread_join(transfer_thread, NULL);
 	message_queue_destroy(&queue);
 	usb_shutdown();
 }
@@ -249,6 +258,6 @@ void get_overbridge_wav_data(int32_t* data) {
 	message_queue_message_free(&queue, qp);
 }
 
-uint32_t get_overbridge_qlen() {
-	return queue.queue.entries;
+uint32_t overbridge_get_qlen() {
+	return queue.allocator.free_blocks;
 }
