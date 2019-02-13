@@ -91,11 +91,13 @@ int main(int argc, char *argv[]) {
 		written_bytes += (sf_write_int(wavfile, wavd, TRANSFER_WAV_DATA_SIZE))
 				* 4;
 		newclk = clock();
-		if ((newclk - oldclk) > 250) {	// print every 250ms
+		if ((newclk - oldclk) > 10000) {// = 10ms, good value on rpi3 -> TODO: proper calculation
 			printf("%i kB - buff: %i - xrun: %i\n", written_bytes / 1024,
 					overbridge_get_qlen(),
 					overbridge_get_xrun());
 			oldclk = newclk;
+			// we sync the file in short intervals to prevent load/io/whatever spikes
+			sf_write_sync(wavfile);
 		}
 	};
 

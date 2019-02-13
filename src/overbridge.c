@@ -46,6 +46,15 @@ static int running = 1;
 static int prepare_cycle_in();	// forward declaration
 static int prepare_cycle_out();	// forward declaration
 
+// thanks to http://www.netzmafia.de/skripten/hardware/RasPi/RasPi_Prozesse.html
+int set_max_priority(void) {
+	struct sched_param sched;
+	memset(&sched, 0, sizeof(sched));
+	sched.sched_priority = sched_get_priority_max(SCHED_FIFO);
+	printf("max prio is: %i\n", sched.sched_priority);
+	return (sched_setscheduler(0, SCHED_FIFO, &sched));
+}
+
 static int prepare_transfers() {
 	xfr_in = libusb_alloc_transfer(0);
 	if (!xfr_in) {
@@ -148,6 +157,9 @@ static int prepare_cycle_in() {
 // initialization taken from sniffed session
 
 static int overbridge_init_priv() {
+	if (set_max_priority()) {
+		printf("warning: could not set rt prio!\n");
+	}
 	// libusb setup
 	int ret;
 	ret = libusb_init(NULL);
