@@ -17,7 +17,7 @@
 #include <pthread.h>
 #include "message_queue.h"
 
-#define OB_QUEUESIZE	1024
+#define OB_QUEUESIZE	1024 * 8
 
 // we support only the Digitakt for now ...
 #define DT_VID 0x1935

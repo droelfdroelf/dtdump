@@ -35,8 +35,9 @@ int multiplefiles = 0;
 SNDFILE *wavfile;
 SNDFILE *wavfiles[12];
 int wfd;
+uint32_t minbuffers = UINT32_MAX;
 
-#define SYNCDELAYINMS	25
+#define SYNCDELAYINMS	200
 #define SYNCDELAY	((CLOCKS_PER_SEC/1000)*SYNCDELAYINMS)
 
 
@@ -121,13 +122,13 @@ int main(int argc, char *argv[]) {
 	while (!shtdwn) {
 		get_overbridge_wav_data(wavd);
 		if (multiplefiles) {
-			int32_t deinterleaved[TRANSFER_WAV_DATA_SIZE / 12];
+			int32_t deinterleaved[TRANSFER_WAV_DATA_SIZE];
 			for (int i = 0; i < 12; i++) {
 				for (int j = 0; j < 168; j++) {	// 168 samples per transfer per channel
-					deinterleaved[j] = wavd[(j * 12) + i];
+					deinterleaved[j + (i * 168)] = wavd[(j * 12) + i];
 				}
 				written_bytes += (sf_write_int(wavfiles[i],
-						deinterleaved,
+						deinterleaved + (i * 168),
 						TRANSFER_WAV_DATA_SIZE / 12)) * 4;
 			}
 
@@ -151,9 +152,15 @@ int main(int argc, char *argv[]) {
 				sf_write_sync(wavfile);
 			}
 		}
+		uint32_t qlen = overbridge_get_qlen();
+		if (qlen < minbuffers) {
+			minbuffers = qlen;
+		}
 	};
 
 	printf("\r\n\n");
+	printf("Total stats: Buffers low: %i - Xruns: %i\n", minbuffers,
+			overbridge_get_xrun());
 	if (multiplefiles) {
 		for (int i = 0; i < 12; i++) {
 			sf_write_sync(wavfiles[i]);
