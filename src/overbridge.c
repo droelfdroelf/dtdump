@@ -46,14 +46,18 @@ static int running = 1;
 static int prepare_cycle_in();	// forward declaration
 static int prepare_cycle_out();	// forward declaration
 
-// thanks to http://www.netzmafia.de/skripten/hardware/RasPi/RasPi_Prozesse.html
-// TODO: http://man7.org/linux/man-pages/man3/pthread_setschedparam.3.html
-int set_max_priority(void) {
+// http://man7.org/linux/man-pages/man3/pthread_setschedparam.3.html
+static void set_self_max_priority(void) {
 	struct sched_param sched;
 	memset(&sched, 0, sizeof(sched));
 	sched.sched_priority = sched_get_priority_max(SCHED_FIFO);
 	printf("max prio is: %i\n", sched.sched_priority);
-	return (sched_setscheduler(0, SCHED_FIFO, &sched));
+	int r = pthread_setschedparam(pthread_self(), SCHED_FIFO, &sched);
+	if (r != 0) {
+		printf(
+				"WARNING: Could not set real time priority to %i. Expect drastic performance losses!\n",
+				sched.sched_priority);
+	}
 }
 
 static int prepare_transfers() {
@@ -158,9 +162,6 @@ static int prepare_cycle_in() {
 // initialization taken from sniffed session
 
 static int overbridge_init_priv() {
-	if (set_max_priority()) {
-		printf("warning: could not set rt prio!\n");
-	}
 	// libusb setup
 	int ret;
 	ret = libusb_init(NULL);
@@ -223,6 +224,7 @@ static void usb_shutdown() {
 }
 
 static void* worker(void *ptr) {
+	set_self_max_priority();
 	prepare_cycle_out();
 	prepare_cycle_in();
 	while (running) {
