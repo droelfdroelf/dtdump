@@ -13,7 +13,7 @@ See source for details.
 ```
 mkdir build
 cd build
-cmake ../
+cmake ../ -DCMAKE_BUILD_TYPE=Release
 make
 ```
 # Usage
@@ -24,15 +24,26 @@ make
 Just run ```./dtdump```. It will dump the stream to ```dtdump-<time stamp>.wav```
 (12 channels, 32 Bit integer, 48kHz srate) until you press Ctrl-C.
 
-# Building/running on Raspbian
+**New:** Record to 12 mono files with ```./dtdump -s```
+
+## Real time priority
+The USB transfer thread tries to grab the highest possible real time priority. Unless configured to do so, this is usually only allowed for the root user.
+See also [http://jackaudio.org/faq/linux_rt_config.html](http://jackaudio.org/faq/linux_rt_config.html)
+
+## USB udev rule
+To access the Digitakt as non-root user, a udev file is provided in /udev.
+
+# Dependencies on Raspbian
 install deps: ```sudo apt install libsndfile1-dev libusb-1.0-0-dev cmake 
 build-essential git```
+
 Has to be run as root in default Raspbian (lite) installation.
 
-![Raspberry recording](pics/rpi.png?raw=true "Raspberry recording")
-
 # Storage requirements
-About 2.3MB/s, seems to be no problem with a class 10 SD card on a Rpi3.
+About 2.3MB/s, a class 10 SD card is ok on a Rpi3.
+
+# Thanks
+Thanks to [Jeremy Pepper](https://github.com/LnxPrgr3) for the awesome [Message queue](https://github.com/LnxPrgr3/message_queue)
 
 LICENSE: MIT
 
