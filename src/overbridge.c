@@ -47,6 +47,7 @@ static int prepare_cycle_in();	// forward declaration
 static int prepare_cycle_out();	// forward declaration
 
 // thanks to http://www.netzmafia.de/skripten/hardware/RasPi/RasPi_Prozesse.html
+// TODO: http://man7.org/linux/man-pages/man3/pthread_setschedparam.3.html
 int set_max_priority(void) {
 	struct sched_param sched;
 	memset(&sched, 0, sizeof(sched));

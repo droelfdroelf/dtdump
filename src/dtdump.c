@@ -30,10 +30,14 @@
 #include "overbridge.h"
 
 int shtdwn = 0;
+int multiplefiles = 0;
 
 SNDFILE *wavfile;
+SNDFILE *wavfiles[12];
 int wfd;
 
+#define SYNCDELAYINMS	25
+#define SYNCDELAY	((CLOCKS_PER_SEC/1000)*SYNCDELAYINMS)
 
 
 static void sighandler(int s) {
@@ -58,25 +62,54 @@ int main(int argc, char *argv[]) {
 		exit(1);
 	}
 
-	// wav file setup
-	SF_INFO sfinfo;
-	memset(&sfinfo, 0, sizeof(sfinfo));
-	sfinfo.channels = 12;
-	sfinfo.format = SF_FORMAT_WAV | SF_FORMAT_PCM_32;
-	sfinfo.samplerate = 48000;
-	if (!sf_format_check(&sfinfo)) {
-		printf("format check failed\n");
-	};
-	char wavfilename[200];
-	time_t now = time(NULL);
-	struct tm *t = localtime(&now);
-	strftime(wavfilename, sizeof(wavfilename) - 1, "obdump_%Y%m%d-%H%M%S.wav",
-			t);
+	if (argc == 2) {
+		if (!strcmp(argv[1], "-s")) {
+			multiplefiles = 1;
+		}
+	}
 
-	wavfile = sf_open(wavfilename, SFM_WRITE, &sfinfo);
+	if (multiplefiles) {
+		// wav file setup
+		SF_INFO sfinfo;
+		memset(&sfinfo, 0, sizeof(sfinfo));
+		sfinfo.channels = 1;
+		sfinfo.format = SF_FORMAT_WAV | SF_FORMAT_PCM_32;
+		sfinfo.samplerate = 48000;
+		if (!sf_format_check(&sfinfo)) {
+			printf("format check failed\n");
+		};
+		char wavfilename[200];
+		time_t now = time(NULL);
+		struct tm *t = localtime(&now);
+		for (int i = 0; i < 12; i++) {
+			strftime(wavfilename, sizeof(wavfilename) - 1,
+					"obdump_%Y%m%d-%H%M%S", t);
+			char ext[10];
+			sprintf(ext, "-%02d.wav", i);
+			strcat(wavfilename, ext);
+			wavfiles[i] = sf_open(wavfilename, SFM_WRITE, &sfinfo);
+			printf("Recording to %s, Ctrl-C to stop.\n", wavfilename);
+		}
+	} else {
+		// wav file setup
+		SF_INFO sfinfo;
+		memset(&sfinfo, 0, sizeof(sfinfo));
+		sfinfo.channels = 12;
+		sfinfo.format = SF_FORMAT_WAV | SF_FORMAT_PCM_32;
+		sfinfo.samplerate = 48000;
+		if (!sf_format_check(&sfinfo)) {
+			printf("format check failed\n");
+		};
+		char wavfilename[200];
+		time_t now = time(NULL);
+		struct tm *t = localtime(&now);
+		strftime(wavfilename, sizeof(wavfilename) - 1,
+				"obdump_%Y%m%d-%H%M%S.wav", t);
 
+		wavfile = sf_open(wavfilename, SFM_WRITE, &sfinfo);
 
-	printf("Recording to %s, Ctrl-C to stop.\n", wavfilename);
+		printf("Recording to %s, Ctrl-C to stop.\n", wavfilename);
+	}
 
 	overbridge_start_streaming();
 
@@ -87,23 +120,49 @@ int main(int argc, char *argv[]) {
 	int32_t wavd[TRANSFER_WAV_DATA_SIZE];
 	while (!shtdwn) {
 		get_overbridge_wav_data(wavd);
+		if (multiplefiles) {
+			int32_t deinterleaved[TRANSFER_WAV_DATA_SIZE / 12];
+			for (int i = 0; i < 12; i++) {
+				for (int j = 0; j < 168; j++) {	// 168 samples per transfer per channel
+					deinterleaved[j] = wavd[(j * 12) + i];
+				}
+				written_bytes += (sf_write_int(wavfiles[i],
+						deinterleaved,
+						TRANSFER_WAV_DATA_SIZE / 12)) * 4;
+			}
 
+		} else {
 		written_bytes += (sf_write_int(wavfile, wavd, TRANSFER_WAV_DATA_SIZE))
 				* 4;
+		}
 		newclk = clock();
-		if ((newclk - oldclk) > 10000) {// = 10ms, good value on rpi3 -> TODO: proper calculation
+		if ((newclk - oldclk) > SYNCDELAY) {
+
 			printf("%i kB - buff: %i - xrun: %i\n", written_bytes / 1024,
 					overbridge_get_qlen(),
 					overbridge_get_xrun());
 			oldclk = newclk;
-			// we sync the file in short intervals to prevent load/io/whatever spikes
-			sf_write_sync(wavfile);
+			if (multiplefiles) {
+				for (int i = 0; i < 12; i++) {
+					sf_write_sync(wavfiles[i]);
+				}
+			} else {
+				// we sync the file in short intervals to prevent load/io/whatever spikes
+				sf_write_sync(wavfile);
+			}
 		}
 	};
 
 	printf("\r\n\n");
-	sf_write_sync(wavfile);
-	sf_close(wavfile);
+	if (multiplefiles) {
+		for (int i = 0; i < 12; i++) {
+			sf_write_sync(wavfiles[i]);
+			sf_close(wavfiles[i]);
+		}
+	} else {
+		sf_write_sync(wavfile);
+		sf_close(wavfile);
+	}
 	overbridge_shutdown();
 	return 0;
 }

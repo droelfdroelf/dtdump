@@ -1,5 +1,5 @@
-cmake_minimum_required (VERSION 2.6)
-project (usbt)
+cmake_minimum_required (VERSION 3.1.3)
+project (dtdump)
 SET(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${PROJECT_SOURCE_DIR}/cmake/")
 
 find_package(LibSndFile REQUIRED)
@@ -23,5 +23,7 @@ endif(LibUSB_FOUND)
 
 include_directories(header)
 file(GLOB SOURCES "src/*.c")
+
 add_executable(dtdump ${SOURCES})  
 target_link_libraries(dtdump ${LibUSB_LIBRARIES} ${LIBSNDFILE_LIBRARY} pthread)
+set_property(TARGET dtdump PROPERTY C_STANDARD 99)
