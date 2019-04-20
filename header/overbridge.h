@@ -21,8 +21,13 @@
  Data format TO Digitakt (USB interrupt transfer, EP 0x03)
  ----------------------------------------------------------------
 
- Raw data of 7 blocks (total 2112 Bytes). Structure of a
- single block:
+ Raw data of the transfer consists of 24 blocks, each block holding
+ - a fixed header
+ - a sample counter (uint16 BE), increased by 7 per block (because
+ each block contains 7 samples)
+ - 7 samples (int32 BE) * 2 channels (interleaved)
+
+ (total 168 samples, 2112 Bytes). Structure of a single block:
 
  0                   1                   2                   3
  0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1
@@ -55,7 +60,7 @@
  Data format FROM Digitakt (USB interrupt transfer, EP 0x83)
  ----------------------------------------------------------------
 
- Raw data of 7 blocks (total 8832 Bytes). Structure of a
+ Raw data of 24 blocks (total 8832 Bytes). Structure of a
  single block:
 
  0                   1                   2                   3
