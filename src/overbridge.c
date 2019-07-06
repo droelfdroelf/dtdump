@@ -19,15 +19,15 @@
 
 #define OB_QUEUESIZE	1024 * 8
 
-// we support only the Digitakt for now ...
 #define DT_VID 0x1935
-#define DT_PID 0x000c
+#define DTAKT_PID 0x000c
+#define DTONE_PID 0x0014
 
 #define TRANSFER_OUT_DATA_SIZE 2112
 #define TRANSFER_IN_DATA_SIZE 8832
 
 
-static libusb_device_handle* digitakt;
+static libusb_device_handle* digit;
 static uint8_t dummy_out_data[TRANSFER_OUT_DATA_SIZE] = { 0 };
 static uint8_t in_data[TRANSFER_IN_DATA_SIZE] = { 0 };
 int32_t overbridge_wav_data[TRANSFER_WAV_DATA_SIZE];
@@ -143,7 +143,7 @@ static void LIBUSB_CALL cb_xfr_out(struct libusb_transfer *xfr) {
 
 static int prepare_cycle_out() {
 	fill_dummy_data();
-	libusb_fill_interrupt_transfer(xfr_out, digitakt, 0x03, dummy_out_data,
+	libusb_fill_interrupt_transfer(xfr_out, digit, 0x03, dummy_out_data,
 			sizeof(dummy_out_data), cb_xfr_out, NULL, 100);
 	int r;
 	r = libusb_submit_transfer(xfr_out);
@@ -152,7 +152,7 @@ static int prepare_cycle_out() {
 
 // sends  (dummy) data to the dt and receives
 static int prepare_cycle_in() {
-	libusb_fill_interrupt_transfer(xfr_in, digitakt, 0x83, in_data,
+	libusb_fill_interrupt_transfer(xfr_in, digit, 0x83, in_data,
 			sizeof(in_data), cb_xfr_in, NULL, 100);
 	int r;
 	r = libusb_submit_transfer(xfr_in);
@@ -168,39 +168,42 @@ static int overbridge_init_priv() {
 	if (ret != LIBUSB_SUCCESS) {
 		return OVERBRIDGE_LIBUSB_INIT_FAILED;
 	}
-	digitakt = libusb_open_device_with_vid_pid(NULL, DT_VID, DT_PID);
-	if (!digitakt) {
-		return OVERBRIDGE_NO_USB_DEV_FOUND;
+	digit = libusb_open_device_with_vid_pid(NULL, DT_VID, DTAKT_PID);
+	if (!digit) {
+		digit = libusb_open_device_with_vid_pid(NULL, DT_VID, DTONE_PID);
+		if (!digit) {
+			return OVERBRIDGE_NO_USB_DEV_FOUND;
+		}
 	}
-	ret = libusb_set_configuration(digitakt, 1);
+	ret = libusb_set_configuration(digit, 1);
 	if (LIBUSB_SUCCESS != ret) {
 		return OVERBRIDGE_CANT_SET_USB_CONFIG;
 	}
-	ret = libusb_set_configuration(digitakt, 1);
+	ret = libusb_set_configuration(digit, 1);
 	if (LIBUSB_SUCCESS != ret) {
 		return OVERBRIDGE_CANT_SET_USB_CONFIG;
 	}
-	ret = libusb_claim_interface(digitakt, 2);
+	ret = libusb_claim_interface(digit, 2);
 	if (LIBUSB_SUCCESS != ret) {
 		return OVERBRIDGE_CANT_CLAIM_IF;
 	}
-	ret = libusb_claim_interface(digitakt, 1);
+	ret = libusb_claim_interface(digit, 1);
 	if (LIBUSB_SUCCESS != ret) {
 		return OVERBRIDGE_CANT_CLAIM_IF;
 	}
-	ret = libusb_set_interface_alt_setting(digitakt, 2, 2);
+	ret = libusb_set_interface_alt_setting(digit, 2, 2);
 	if (LIBUSB_SUCCESS != ret) {
 		return OVERBRIDGE_CANT_SET_ALT_SETTING;
 	}
-	ret = libusb_set_interface_alt_setting(digitakt, 1, 3);
+	ret = libusb_set_interface_alt_setting(digit, 1, 3);
 	if (LIBUSB_SUCCESS != ret) {
 		return OVERBRIDGE_CANT_SET_ALT_SETTING;
 	}
-	ret = libusb_clear_halt(digitakt, 131);
+	ret = libusb_clear_halt(digit, 131);
 	if (LIBUSB_SUCCESS != ret) {
 		return OVERBRIDGE_CANT_CLEAR_EP;
 	}
-	ret = libusb_clear_halt(digitakt, 3);
+	ret = libusb_clear_halt(digit, 3);
 	if (LIBUSB_SUCCESS != ret) {
 		return OVERBRIDGE_CANT_CLEAR_EP;
 	}
@@ -216,8 +219,8 @@ static int overbridge_init_priv() {
 }
 
 static void usb_shutdown() {
-	if (digitakt) {
-		libusb_close(digitakt);
+	if (digit) {
+		libusb_close(digit);
 	}
 	free_transfers();
 	libusb_exit(NULL);
