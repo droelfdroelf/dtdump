@@ -20,8 +20,18 @@
 #define OB_QUEUESIZE	1024 * 8
 
 #define DT_VID 0x1935
+
+#define AFMK1_PID 0x0004
+#define AKEYS_PID 0x0006
+#define ARMK1_PID 0x0008
+
+#define AHMK1_PID 0x000a
 #define DTAKT_PID 0x000c
+#define AFMK2_PID 0x000e
+#define ARMK2_PID 0x0010
 #define DTONE_PID 0x0014
+#define AHMK2_PID 0x0016
+#define DKEYS_PID 0x001c
 
 #define TRANSFER_OUT_DATA_SIZE 2112
 #define TRANSFER_IN_DATA_SIZE 8832
