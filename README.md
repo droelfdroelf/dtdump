@@ -1,9 +1,16 @@
 # dtdump
 An open [Overbridge](https://www.elektronauts.com/t/overbridge-2-0-public-beta-plugins-drivers-and-firmware/70486) protocol implementation proof of concept.
 
-Dumps all channels to a multi channel WAV file.
+Dumps all channels to a multi-channel WAV file.
+
+It will try both PIDs (first Digitakt, then Digitone) 
+during USB init and use the first available one. So
+it should work now on both devices.
+
 Note that everything is tested with a Digitakt,
-running OS 1.11_BETA6! Most certainly other Overbridge enabled
+running OS 1.11_BETA6! 
+
+Most certainly other Overbridge-enabled
 devices won't work out of the box without modifications.
 See source for details.
 
@@ -26,8 +33,8 @@ Just run ```./dtdump```. It will dump the stream to ```dtdump-<time stamp>.wav``
 
 **New:** Record to 12 mono files with ```./dtdump -s```
 
-## Real time priority
-The USB transfer thread tries to grab the highest possible real time priority. Unless configured to do so, this is usually only allowed for the root user.
+## Real-time priority
+The USB transfer thread tries to grab the highest possible real-time priority. Unless configured to do so, this is usually only allowed for the root user.
 See also [http://jackaudio.org/faq/linux_rt_config.html](http://jackaudio.org/faq/linux_rt_config.html)
 
 ## USB udev rule
@@ -40,7 +47,7 @@ build-essential git```
 Has to be run as root in default Raspbian (lite) installation.
 
 # Storage requirements
-About 2.3MB/s, a class 10 SD card is ok on a Rpi3.
+About 2.3MB/s, a class 10 SD card is OK on a Rpi3.
 
 # Thanks
 Thanks to [Jeremy Pepper](https://github.com/LnxPrgr3) for the awesome [Message queue](https://github.com/LnxPrgr3/message_queue)
