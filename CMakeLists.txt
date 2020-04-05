@@ -1,4 +1,4 @@
-cmake_minimum_required (VERSION 3.1.3)
+cmake_minimum_required (VERSION 2.6)
 project (dtdump)
 SET(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${PROJECT_SOURCE_DIR}/cmake/")
 
@@ -26,4 +26,6 @@ file(GLOB SOURCES "src/*.c")
 
 add_executable(dtdump ${SOURCES})  
 target_link_libraries(dtdump ${LibUSB_LIBRARIES} ${LIBSNDFILE_LIBRARY} pthread)
+
 set_property(TARGET dtdump PROPERTY C_STANDARD 99)
+set(CMAKE_C_FLAGS "-std=c99")  # For older versions of CMake
