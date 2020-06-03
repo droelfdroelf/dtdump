@@ -23,6 +23,9 @@ cd build
 cmake ../ -DCMAKE_BUILD_TYPE=Release
 make
 ```
+
+On Mac OS X you might need to set env variable: `PKG_CONFIG_PATH=/usr/local/lib/pkgconfig`
+
 # Usage
 
 **Note** You have to configure the routing accordingly as in the picture below. **This is not the default setting**! It is likely that the data format, number of channels etc. differ without changing this, and dtdump will fail (since everything is hard coded so far).
@@ -36,6 +39,12 @@ Just run ```./dtdump```. It will dump the stream to ```dtdump-<time stamp>.wav``
 ## Real-time priority
 The USB transfer thread tries to grab the highest possible real-time priority. Unless configured to do so, this is usually only allowed for the root user.
 See also [http://jackaudio.org/faq/linux_rt_config.html](http://jackaudio.org/faq/linux_rt_config.html)
+
+On Mac OS X, the following works to reduce Xruns:
+
+```
+sudo nice -n -20 ./dtdump
+```
 
 ## USB udev rule
 To access the Digitakt as non-root user, a udev file is provided in /udev.
