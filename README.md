@@ -1,6 +1,9 @@
-# dtdump
 An open [Overbridge](https://www.elektronauts.com/t/overbridge-2-0-public-beta-plugins-drivers-and-firmware/70486) protocol implementation proof of concept.
+# NOTE:
+For a working and actively developed Overbridge<->JACK bridge, please see:
+https://github.com/dagargo/overwitch
 
+# dtdump
 Dumps all channels to a multi-channel WAV file.
 
 It will try both PIDs (first Digitakt, then Digitone) 
